@@ -633,9 +633,6 @@ int main (int argc, char **argv)
         {
             double x = j/(float)WIDTH * 4 - 2, y = (1 - i/(float)HEIGHT) * 4 - 2, vitesse_x = 0, vitesse_y = 0;
 
-            /* x = 0.2; */
-            /* y = -1.6; */
-            
             // Variables temporaires
             double tvx, tvy, tx, ty;
 
@@ -662,21 +659,18 @@ int main (int argc, char **argv)
                     nb_convergences++;
                     closest_magnet = 0;
                 } else if(fabs(X2 - x) + fabs(Y2 - y) < ZERO_POINT_CINQ) {
-                    /* printf("YWAAAAAAAAAAAAAAAAAAADO\n"); */
                     if(closest_magnet != 1) {
                         nb_convergences = 0;
                     }
                     nb_convergences++;
                     closest_magnet = 1;
                 } else if(fabs(X3 - x) + fabs(Y3 - y) < ZERO_POINT_CINQ) {
-                    /* printf("TWADDDDDDDDDDDDDDDDDDDDD\n"); */
                     if(closest_magnet != 2) {
                         nb_convergences = 0;
                     }
                     nb_convergences++;
                     closest_magnet = 2;
                 } else {
-                    /* printf("CALICE POURQUOIT TOUTE MOURRER\n"); */
                     closest_magnet = -1;
                     nb_convergences = 0;
                 }
@@ -688,8 +682,6 @@ int main (int argc, char **argv)
                     break;
                 }
             }
-
-            /* printf("closest is %d and nb ist %d\n", closest_magnet, nb_convergences); */
         }
         printf("%d\n", i);
     }
