@@ -19,7 +19,7 @@
 #include <unistd.h>
 
 /************************************************************************/
-/* WINDOWS		                        				          	*/
+/* WINDOWS                                                              */
 /************************************************************************/
 #include <X11/Xutil.h>
 
@@ -63,7 +63,7 @@ GC	  gc;
 //-Cst-Runge-Kutta
 #define H 0.0001
 #define T_0 0.0
-#define T_F 30.0
+#define T_F 20.0
 #define NB_INTERV (T_F-T_0)/H
 
 //-Cst-Image
@@ -371,6 +371,14 @@ void Fill_Pict(float** MatPts,float** MatPict,int PtsNumber,int NbPts)
 //------------------------------------------------
 #define SQUARE(x) ((x)*(x))
 
+double xprim(double x_t, double y_t, double z_t) {
+    return z_t;
+}
+
+double yprim(double x_t, double y_t, double z_t) {
+    return z_t;
+}
+
 double zprim_x(double x_t, double y_t, double z_t) {
     return -R * z_t
         + (X_1 - x_t) / pow(SQUARE(X_1 - x_t) + SQUARE(Y_1 - y_t) + SQUARE(D), 3.0/2)
@@ -408,17 +416,17 @@ double runge_kutta_fehlberg_Xz(double x, double y, double z) {
 double runge_kutta_fehlberg_Xx(double x, double y, double z) {
     double k1, k2, k3, k4, k5, k6;
 
-    k1 = H * z;
+    k1 = H * xprim(x, y, z);
 
-    k2 = H * z + H/4.0;
+    k2 = H * xprim(x, y + H/4.0, z + k1/4.0);
 
-    k3 = H * z + 3*H/8.0;
+    k3 = H * xprim(x, y + 3*H/8.0, z + 3 * k1/32.0 + 9*k2/32.0);
 
-    k4 = H * z + 12*H/13.0;
+    k4 = H * xprim(x, y + 12*H/13.0, z + 1923 * k1/2197.0 - 7200 * k2/2197.0 + 7296 * k3/2197.0);
 
-    k5 = H * z + H;
+    k5 = H * xprim(x, y + H, z + 439 * k1/216.0 - 8 * k2 + 3680 * k3/513.0 - 845 * k4/4104.0);
 
-    k6 = H * z + H/2.0;
+    k6 = H * xprim(x, y + H/2.0, z - 8*k1/27.0 + 2*k2 - 3544*k3/2565.0 + 1859 * k4/4104 - 11 * k5/40.0);
 
     return x + 16 * k1/135.0 + 6656 * k3/12825.0 + 28561 * k4/56430.0 - 9 * k5/50.0 + 2*k6/55.0;
 }
@@ -444,17 +452,17 @@ double runge_kutta_fehlberg_Yz(double x, double y, double z) {
 double runge_kutta_fehlberg_Yy(double x, double y, double z) {
     double k1, k2, k3, k4, k5, k6;
 
-    k1 = H * z;
+    k1 = H * yprim(x, y, z);
 
-    k2 = H * z + H/4.0;
+    k2 = H * yprim(x, y + H/4.0, z + k1/4.0);
 
-    k3 = H * z + 3*H/8.0;
+    k3 = H * yprim(x, y + 3*H/8.0, z + 3 * k1/32.0 + 9*k2/32.0);
 
-    k4 = H * z + 12*H/13.0;
+    k4 = H * yprim(x, y + 12*H/13.0, z + 1923 * k1/2197.0 - 7200 * k2/2197.0 + 7296 * k3/2197.0);
 
-    k5 = H * z + H;
+    k5 = H * yprim(x, y + H, z + 439 * k1/216.0 - 8 * k2 + 3680 * k3/513.0 - 845 * k4/4104.0);
 
-    k6 = H * z + H/2.0;
+    k6 = H * yprim(x, y + H/2.0, z - 8*k1/27.0 + 2*k2 - 3544*k3/2565.0 + 1859 * k4/4104 - 11 * k5/40.0);
 
     return y + 16 * k1/135.0 + 6656 * k3/12825.0 + 28561 * k4/56430.0 - 9 * k5/50.0 + 2*k6/55.0;
 }
@@ -491,7 +499,7 @@ int main (int argc, char **argv)
     //---------------------------------------------------------------------
     //>Question 1
     //---------------------------------------------------------------------
-    double x = X0_INI - 1.2, y = Y0_INI, vitesse_x = X0_PRIM, vitesse_y = X0_PRIM;
+    double x = X0_INI, y = Y0_INI, vitesse_x = X0_PRIM, vitesse_y = Y0_PRIM;
 
     // Variables temporaires
     double tvx, tvy, tx, ty;
